@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermomaxing | Recipe Importer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="background-glow"></div>
+    <div class="container">
+        <header>
+            <h1>Thermomaxing</h1>
+            <p class="subtitle">Import recipes to Cookidoo with AI magic</p>
+        </header>
+
+        <main>
+            <div class="card glass-panel">
+                <div class="input-group">
+                    <input type="text" id="recipe-url" placeholder="Paste recipe URL here..." autocomplete="off">
+                    <button id="import-btn" onclick="startImport()">
+                        <span class="btn-text">Import</span>
+                        <div class="loader"></div>
+                    </button>
+                </div>
+                <div id="error-message" class="error-message"></div>
+            </div>
+
+            <div class="status-wrapper">
+                <div id="status-container" class="status-container hidden">
+                    <div class="status-header">
+                        <h3>Live Status</h3>
+                        <span id="message-update" class="pulse"></span>
+                    </div>
+                    <div id="status-log" class="status-log">
+                        <!-- Logs will appear here -->
+                    </div>
+                </div>
+                <div id="ai-container" class="status-container hidden">
+                    <div class="status-header">
+                        <h3>AI Status</h3>
+                        <span id="ai-update" class="pulse"></span>
+                    </div>
+                    <div id="ai-log" class="status-log">
+                        <code id="ai-code-block">
+                            <!-- AI will appear here -->
+                        </code>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div id="success-overlay" class="overlay hidden">
+                <div class="overlay-content glass-panel">
+                    <div class="success-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h2>Import Successful!</h2>
+                    <p>Your recipe is now available in Cookidoo.</p>
+                    <button onclick="resetUI()">Import Another</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
