@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import StreamingResponse
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
@@ -20,7 +20,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def read_root():
-    from fastapi.responses import FileResponse
     return FileResponse('static/index.html')
 
 @app.get("/import")
@@ -31,8 +30,8 @@ async def import_recipe(url: str):
         loop = asyncio.get_running_loop()
         
         def sync_callback(msg_object):
-            #print("[Callback]", msg_object)
-            loop.call_soon_threadsafe(queue.put_nowait, {"message": msg_object.get("message", None), "ai": msg_object.get("ai", None)})
+            # Forward structured step events to the async queue
+            loop.call_soon_threadsafe(queue.put_nowait, msg_object)
 
         importer = RecipeImporter(status_callback=sync_callback)
         
@@ -47,19 +46,20 @@ async def import_recipe(url: str):
             except asyncio.TimeoutError:
                 continue
             except Exception as e:
-                yield f"data: {json.dumps({'message': None, 'ai': str(e)})}\n\n"
+                yield f"data: {json.dumps({'error': str(e)})}\n\n"
                 break
         
         # Check if there was an exception in the thread
         try:
             await future
         except Exception as e:
-            yield f"data: {json.dumps({'message': None, 'ai': str(e)})}\n\n"
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
 
-        yield f"data: {json.dumps({'message': None, 'ai': 'done'})}\n\n"
+        yield f"data: {json.dumps({'event': 'done'})}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 if __name__ == "__main__":
     import uvicorn
+    print("Starting server on http://localhost:8000")
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -6,21 +6,24 @@ import requests
 import html2text
 import json
 import re
-import sys
-from typing import Callable, Optional
+from typing import Callable, Optional, Dict, Any
 
 dotenv.load_dotenv()
 
 class RecipeImporter:
-    def __init__(self, status_callback: Optional[Callable[[str], None]] = None):
+    def __init__(self, status_callback: Optional[Callable[[Dict[str, Any]], None]] = None):
+        # status_callback receives structured step events
         self.status_callback = status_callback or (lambda x: print(x))
         self.ollama_url = "http://localhost:11434/api/generate"
         self.ollama_model = os.getenv("OLLAMA_MODEL", "qwen2.5:latest")
 
-    def log(self, message: str):
-        self.status_callback({"message": message, "ai": None})
+    def emit_step(self, step: str, status: str, detail: Optional[str] = None):
+        payload = {"step": step, "status": status}
+        if detail:
+            payload["detail"] = detail
+        self.status_callback(payload)
 
-    def query_ollama_stream(self, prompt: str, schema: str, description: str) -> dict:
+    def query_ollama_stream(self, prompt: str, schema: str, description: str, step_name: str) -> dict:
         full_prompt = f"""
         You are an expert data extraction assistant for Thermomix recipes.
         Extract data from the text below and return it as strictly valid JSON.
@@ -34,8 +37,6 @@ class RecipeImporter:
         {prompt}
         """
 
-        self.log(f"AI: {description}...")
-        
         response = requests.post(
             self.ollama_url, 
             json={"model": self.ollama_model, "prompt": full_prompt, "stream": True, "format": "json"},
@@ -51,10 +52,9 @@ class RecipeImporter:
                 try:
                     json_chunk = json.loads(decoded_line)
                     token = json_chunk.get("response", "")
+                    print(token, end='', flush=True)
                     full_response_text += token
                     if json_chunk.get("done", False): break
-                    # Send AI message to the callback
-                    self.status_callback({"message": None, "ai": token})
                 except ValueError: continue
 
         print("\n")
@@ -62,7 +62,7 @@ class RecipeImporter:
         try:
             return json.loads(clean_json_str)
         except json.JSONDecodeError as e:
-            self.log(f"Failed to parse JSON for {description}.")
+            self.emit_step(step_name, "failed", f"Failed to parse JSON for {description}.")
             raise e
 
     def extract_metadata_and_ingredients(self, markdown_content: str) -> dict:
@@ -78,7 +78,7 @@ class RecipeImporter:
             ]
         }
         """
-        return self.query_ollama_stream(markdown_content, schema, "Extracting Ingredients & Metadata")
+        return self.query_ollama_stream(markdown_content, schema, "Extracting Ingredients & Metadata", "extract_ingredients")
 
     def extract_steps(self, markdown_content: str) -> dict:
         schema = """
@@ -104,7 +104,7 @@ class RecipeImporter:
         RECIPE TEXT:
         {markdown_content}
         """
-        return self.query_ollama_stream(prompt_addition, schema, "Extracting Steps")
+        return self.query_ollama_stream(prompt_addition, schema, "Extracting Steps", "analyze_instructions")
 
     def normalize_direction(self, direction: str) -> str:
         direction = str(direction).lower().strip()
@@ -114,24 +114,24 @@ class RecipeImporter:
 
     def login_cookidoo(self, username: str, password: str, page: Page) -> None:
         if page.locator("a[class*='logout']").count() > 0:
-            self.log("Already logged in.")
+            self.emit_step("save_to_collection", "in_progress", "Already logged in.")
             return
 
-        self.log("Navigating to Cookidoo...")
+        self.emit_step("save_to_collection", "in_progress", "Navigating to Cookidoo...")
         page.goto("https://cookidoo.es/")
         try:
             page.locator("button#onetrust-reject-all-handler").click(timeout=3000)
         except: pass 
 
-        self.log("Logging in...")
+        self.emit_step("save_to_collection", "in_progress", "Logging in...")
         page.locator("a[class*='login']").click()
         page.locator("input#username").fill(username)
         page.locator("input#password").fill(password)
         page.locator("button#login-submit-btn").click()
-        self.log("Login process completed.")
+        self.emit_step("save_to_collection", "in_progress", "Login process completed.")
 
     def create_recipe(self, page: Page, data: dict) -> None:
-        self.log("Navigating to create recipe page...")
+        self.emit_step("save_to_collection", "in_progress", "Opening recipe creator...")
         page.goto("https://cookidoo.es/created-recipes")
         page.wait_for_load_state("networkidle")
         
@@ -156,19 +156,19 @@ class RecipeImporter:
         page.wait_for_load_state("networkidle")
         page.locator("button#add-steps").click()
 
-        self.log("Adding steps...")
+        self.emit_step("save_to_collection", "in_progress", "Adding steps to Cookidoo...")
         for index, step in enumerate(data.get("steps", [])):
             self.add_step(page, step, index)
 
-        self.log("Adding ingredients...")
+        self.emit_step("save_to_collection", "in_progress", "Adding ingredients to Cookidoo...")
         for index, ingredient in enumerate(data.get("ingredients", [])):
             self.add_ingredient(page, ingredient, index)
 
-        self.log("Saving recipe...")
+        self.emit_step("save_to_collection", "in_progress", "Saving recipe...")
         page.wait_for_timeout(1000)
         if page.locator("a.button--primary.cr-visible-on-desktop.cr-edit-tabs__confirm-button:visible").count() > 0:
             page.locator("a.button--primary.cr-visible-on-desktop.cr-edit-tabs__confirm-button:visible").first.click()
-            self.log("Recipe saved successfully.")
+            self.emit_step("save_to_collection", "completed", "Recipe saved successfully.")
 
     def add_ingredient(self, page: Page, ingredient: dict, item_index: int) -> None:
         name = ingredient.get("name", "")
@@ -181,7 +181,6 @@ class RecipeImporter:
         input_field.press("Enter")
         input_field.evaluate("(el) => el.dispatchEvent(new Event('input', { bubbles: true }))", input_field)
         input_field.evaluate("el => el.blur()")
-        # self.log(f"Added ingredient: {name}")
 
     def add_step(self, page: Page, step: dict, step_index: int) -> None:
         desc = step.get("description", "")
@@ -195,7 +194,7 @@ class RecipeImporter:
             if re.match(r'^\d+$', raw_temp):
                 temp_setting = raw_temp
             else:
-                temp_setting = "" # TODO update to Varoma later
+                temp_setting = "Varoma"
 
         # Normalize Speed
         raw_speed = str(step.get("speed", "")).strip()
@@ -226,11 +225,9 @@ class RecipeImporter:
         # Save
         page.locator("div#preparation-steps-tab").locator("button.cr-popover-modal__save.button--icon.button--primary").first.click()
         page.locator("div#preparation-steps-tab").locator("button[class*='cr-manage-list__add-button']").first.click()
-        
-        # self.log(f"Added step {step_index + 1}")
 
     def fetch_recipe_from_url(self, url: str) -> str:
-        self.log(f"Fetching URL: {url}")
+        self.emit_step("fetch_recipe", "in_progress", f"Fetching {url}")
         response = requests.get(url)
         response.raise_for_status()
         
@@ -243,7 +240,7 @@ class RecipeImporter:
         for selector in selectors:
             found = soup.select_one(selector)
             if found:
-                self.log(f"Recipe container found: {selector}")
+                self.emit_step("fetch_recipe", "in_progress", f"Recipe container found: {selector}")
                 target_content = found
                 break
         
@@ -254,37 +251,51 @@ class RecipeImporter:
         return h.handle(str(target_content))
 
     def run(self, recipe_url: str):
-        self.log("Starting import process...")
-        
-        try: markdown_content = self.fetch_recipe_from_url(recipe_url)
-        except Exception as e: self.log(f"Error fetching URL: {e}"); return
+        self.emit_step("fetch_recipe", "in_progress", "Starting import process...")
 
-        try: ingredients_data = self.extract_metadata_and_ingredients(markdown_content)
-        except Exception as e: self.log(f"Ingredients Extraction failed: {e}"); return
+        try:
+            markdown_content = self.fetch_recipe_from_url(recipe_url)
+            self.emit_step("fetch_recipe", "completed")
+        except Exception as e:
+            self.emit_step("fetch_recipe", "failed", f"Error fetching URL: {e}")
+            return
 
-        try: steps_data = self.extract_steps(markdown_content)
-        except Exception as e: self.log(f"Steps Extraction failed: {e}"); return
+        self.emit_step("extract_ingredients", "in_progress", "Extracting ingredients and metadata...")
+        try:
+            ingredients_data = self.extract_metadata_and_ingredients(markdown_content)
+            self.emit_step("extract_ingredients", "completed")
+        except Exception as e:
+            self.emit_step("extract_ingredients", "failed", f"Ingredients extraction failed: {e}")
+            return
+
+        self.emit_step("analyze_instructions", "in_progress", "Analyzing instructions...")
+        try:
+            steps_data = self.extract_steps(markdown_content)
+            self.emit_step("analyze_instructions", "completed")
+        except Exception as e:
+            self.emit_step("analyze_instructions", "failed", f"Steps extraction failed: {e}")
+            return
 
         full_recipe_data = {**ingredients_data, **steps_data}
-        self.log(f"Recipe identified: {full_recipe_data.get('title')}")
+        self.emit_step("save_to_collection", "in_progress", f"Saving '{full_recipe_data.get('title', 'recipe')}' to Cookidoo...")
 
-        with sync_playwright() as p:
-            browser = p.firefox.launch(headless=True)
-            page = browser.new_page(viewport={"width": 1400, "height": 800})
-            self.login_cookidoo(os.getenv("COOKIDOO_USERNAME"), os.getenv("COOKIDOO_PASSWORD"), page)
-            self.create_recipe(page, full_recipe_data)
-            browser.close()
-        
-        self.log("DONE")
+        try:
+            with sync_playwright() as p:
+                browser = p.firefox.launch(headless=True)
+                page = browser.new_page(viewport={"width": 1400, "height": 800})
+                self.login_cookidoo(os.getenv("COOKIDOO_USERNAME"), os.getenv("COOKIDOO_PASSWORD"), page)
+                self.create_recipe(page, full_recipe_data)
+                browser.close()
+        except Exception as e:
+            self.emit_step("save_to_collection", "failed", f"Failed to save recipe: {e}")
+            return
 
-def upload_image(image_path: str) -> str:
-    # TODO: Implement image upload for the recipe
-    return None
+        self.status_callback({"event": "done"})
+
+        self.status_callback({"event": "done"})
 
 def main():
-    # CLI usage fallback
-    url = input("Enter Recipe URL: ")
-    importer = RecipeImporter()
+    # CLI usage fallbackorter()
     importer.run(url)
 
 if __name__ == "__main__":

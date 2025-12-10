@@ -159,31 +159,145 @@ button.loading .loader {
     display: block;
 }
 
-/* CHANGE: Wrapper is now a column by default (mobile-first) */
-.status-wrapper {
-    display: flex;
-    gap: 1.5rem; /* Increased gap for better spacing when stacked */
-    flex-direction: column;
-    margin-top: 2rem;
-}
-
-/* CHANGE: Simplified status container styles */
+/* Status Container (Merged into card) */
 .status-container {
+    margin-top: 2rem;
     text-align: left;
-    animation: fadeInUp 0.8s ease-out 0.4s backwards;
-    flex: 1; /* Allows children to take up equal space in a flex row */
-    min-width: 0; /* Prevents content from overflowing the flex container */
+    border-top: 1px solid var(--glass-border);
+    padding-top: 2rem;
+    animation: fadeIn 0.5s ease-out;
 }
 
 .status-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     color: #94a3b8;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+.steps-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s ease;
+}
+
+.step:last-child {
+    border-bottom: none;
+}
+
+.step-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.step-icon-wrapper {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.step-number {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    display: grid;
+    place-items: center;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.step-check {
+    color: var(--success-color);
+    animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.step-spinner {
+    color: var(--primary-color);
+    animation: rotate 1s linear infinite;
+    display: flex; /* Ensure icon is centered if it's a flex item */
+}
+
+.step-error {
+    color: var(--error-color);
+    animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.step-text {
+    text-align: left;
+    flex: 1;
+}
+
+.step-label {
+    font-weight: 500;
+    font-size: 1rem;
+    color: #e2e8f0;
+}
+
+.step-sub {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 0.1rem;
+}
+
+/* Active/Completed States */
+.step.in_progress .step-number {
+    background: var(--primary-color);
+    color: #0f172a;
+    box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.step.in_progress .step-label {
+    color: #fff;
+}
+
+.step.completed .step-label {
+    color: #94a3b8;
+}
+
+.step.failed .step-label {
+    color: var(--error-color);
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Error Modal Icon */
+.error-icon {
+    width: 64px;
+    height: 64px;
+    background: rgba(248, 113, 113, 0.2);
+    color: var(--error-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
 }
 
 .pulse {
@@ -195,39 +309,7 @@ button.loading .loader {
     animation: pulse 2s infinite;
 }
 
-.status-log {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    padding: 1rem;
-    height: 200px; /* This maintains the fixed height as requested */
-    overflow-y: auto;
-    font-family: 'Consolas', monospace;
-    font-size: 0.9rem;
-    color: #cbd5e1;
-    border: 1px solid var(--glass-border);
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
-}
 
-.status-log::-webkit-scrollbar {
-    display: none;
-}
-
-.log-entry {
-    margin-bottom: 0.5rem;
-    opacity: 0;
-    animation: slideIn 0.3s ease-out forwards;
-}
-
-.log-entry.error {
-    color: var(--error-color);
-}
-
-.log-entry.success {
-    color: var(--success-color);
-}
 
 .overlay {
     position: fixed;
@@ -287,22 +369,10 @@ button.loading .loader {
     min-height: 1.2em;
 }
 
-#message-update .pulse {
-    background-color: var(--success-color);
-    box-shadow: 0 0 0 rgba(74, 222, 128, 0.4);
-    animation: greenPulse 2s infinite;
-}
-
-#ai-update .pulse {
+#progress-update .pulse {
     background-color: var(--primary-color);
     box-shadow: 0 0 0 rgba(56, 189, 248, 0.4);
     animation: bluePulse 2s infinite;
-}
-
-#ai-code-block {
-    white-space: pre-wrap; /* Preserves spaces, tabs, and newlines */
-    word-break: break-all;   /* Helps break long words that might overflow */
-    text-align: left;        /* Ensure text is aligned left inside the code block */
 }
 
 /* --- KEYFRAME ANIMATIONS --- */
@@ -335,6 +405,11 @@ button.loading .loader {
     to {
         transform: translate(-50%, -50%) rotate(360deg);
     }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 @keyframes pulse {

@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
@@ -28,44 +29,34 @@
                         <div class="loader"></div>
                     </button>
                 </div>
-                <div id="error-message" class="error-message"></div>
-            </div>
-
-            <div class="status-wrapper">
-                <div id="status-container" class="status-container hidden">
+                
+                <div id="progress-container" class="status-container hidden">
                     <div class="status-header">
-                        <h3>Live Status</h3>
-                        <span id="message-update" class="pulse"></span>
+                        <h3>Import Progress</h3>
                     </div>
-                    <div id="status-log" class="status-log">
-                        <!-- Logs will appear here -->
-                    </div>
-                </div>
-                <div id="ai-container" class="status-container hidden">
-                    <div class="status-header">
-                        <h3>AI Status</h3>
-                        <span id="ai-update" class="pulse"></span>
-                    </div>
-                    <div id="ai-log" class="status-log">
-                        <code id="ai-code-block">
-                            <!-- AI will appear here -->
-                        </code>
-                        
-                    </div>
+                    <ul id="steps-list" class="steps-list"></ul>
                 </div>
             </div>
 
             <div id="success-overlay" class="overlay hidden">
                 <div class="overlay-content glass-panel">
                     <div class="success-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
+                        <i data-lucide="check-circle" width="48" height="48"></i>
                     </div>
                     <h2>Import Successful!</h2>
                     <p>Your recipe is now available in Cookidoo.</p>
                     <button onclick="resetUI()">Import Another</button>
+                </div>
+            </div>
+
+            <div id="error-overlay" class="overlay hidden">
+                <div class="overlay-content glass-panel">
+                    <div class="error-icon">
+                        <i data-lucide="alert-circle" width="48" height="48"></i>
+                    </div>
+                    <h2>Import Failed</h2>
+                    <p id="error-modal-message">Something went wrong.</p>
+                    <button onclick="resetUI()">Try Again</button>
                 </div>
             </div>
         </main>
