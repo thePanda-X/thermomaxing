@@ -1,0 +1,3 @@
+COOKIDOO_USERNAME=your-username
+COOKIDOO_PASSWORD=your-password
+OLLAMA_MODEL=qwen3:4b-instruct
