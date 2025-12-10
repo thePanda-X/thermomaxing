@@ -209,6 +209,8 @@ class RecipeImporter:
         page.locator("div#preparation-steps-tab").locator("span.icon--speed:visible").first.click()
 
         # Time
+        if minutes == "0" and seconds == "0":
+            seconds = "1"
         page.locator(f"input[aria-describedby='minutes']").fill(minutes)
         page.locator(f"input[aria-describedby='seconds']").fill(seconds)
 
@@ -218,9 +220,10 @@ class RecipeImporter:
             page.locator(f"label[for='temperature-radio-{temp_setting}']").click()
 
         # Speed and Direction
-        page.locator("cr-tts-speed").locator("button[aria-controls='setting-panel']").click()
-        page.locator(f"label[for='direction-radio-{direction}']").click()
-        page.locator(f"label[for='speed-radio-{speed_setting}']").click()
+        if speed_setting:
+            page.locator("cr-tts-speed").locator("button[aria-controls='setting-panel']").click()
+            page.locator(f"label[for='direction-radio-{direction}']").click()
+            page.locator(f"label[for='speed-radio-{speed_setting}']").click()
 
         # Save
         page.locator("div#preparation-steps-tab").locator("button.cr-popover-modal__save.button--icon.button--primary").first.click()
