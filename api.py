@@ -52,12 +52,12 @@ class RecipeImporter:
                 try:
                     json_chunk = json.loads(decoded_line)
                     token = json_chunk.get("response", "")
-                    print(token, end='', flush=True)
+                    # print(token, end='', flush=True)
                     full_response_text += token
                     if json_chunk.get("done", False): break
                 except ValueError: continue
 
-        print("\n")
+        # print("\n")
         clean_json_str = re.sub(r"```json\s*|\s*```", "", full_response_text).strip()
         try:
             return json.loads(clean_json_str)
