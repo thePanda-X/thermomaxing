@@ -291,6 +291,3 @@ class RecipeImporter:
             return
 
         self.status_callback({"event": "done"})
-
-        self.status_callback({"event": "done"})
-
