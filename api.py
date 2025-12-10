@@ -294,9 +294,3 @@ class RecipeImporter:
 
         self.status_callback({"event": "done"})
 
-def main():
-    # CLI usage fallbackorter()
-    importer.run(url)
-
-if __name__ == "__main__":
-    main()
