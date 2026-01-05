@@ -1,0 +1,109 @@
+{
+  "title": "Roscón de Reyes",
+  "prep_time_hours": "0",
+  "prep_time_minutes": "15",
+  "total_time_hours": "1",
+  "total_time_minutes": "15",
+  "ingredients": [
+    {
+      "name": "harina de fuerza",
+      "quantity": "90",
+      "unit": "g"
+    },
+    {
+      "name": "leche semidesnatada",
+      "quantity": "50",
+      "unit": "g"
+    },
+    {
+      "name": "levadura fresca de panadería",
+      "quantity": "5",
+      "unit": "g"
+    },
+    {
+      "name": "azúcar blanquilla",
+      "quantity": "120",
+      "unit": "g"
+    },
+    {
+      "name": "piel de naranja",
+      "quantity": "2",
+      "unit": "unidades"
+    },
+    {
+      "name": "piel de limón",
+      "quantity": "1",
+      "unit": "unidades"
+    },
+    {
+      "name": "leche semidesnatada o entera",
+      "quantity": "80",
+      "unit": "ml"
+    },
+    {
+      "name": "palo de canela",
+      "quantity": "1",
+      "unit": "unidades"
+    },
+    {
+      "name": "azúcar aromatizado",
+      "quantity": "120",
+      "unit": "g"
+    },
+    {
+      "name": "leche aromatizada",
+      "quantity": "80",
+      "unit": "ml"
+    },
+    {
+      "name": "mantequilla",
+      "quantity": "60",
+      "unit": "g"
+    },
+    {
+      "name": "huevos medianos",
+      "quantity": "2",
+      "unit": "unidades"
+    },
+    {
+      "name": "aroma de azahar",
+      "quantity": "30",
+      "unit": "g"
+    },
+    {
+      "name": "harina de fuerza",
+      "quantity": "340",
+      "unit": "g"
+    },
+    {
+      "name": "sal",
+      "quantity": "1",
+      "unit": "pizca"
+    },
+    {
+      "name": "prefermento",
+      "quantity": "1",
+      "unit": "unidades"
+    },
+    {
+      "name": "huevo batido",
+      "quantity": "1",
+      "unit": "unidades"
+    },
+    {
+      "name": "azúcar humedecido en agua",
+      "quantity": "1",
+      "unit": "unidades"
+    },
+    {
+      "name": "almendras",
+      "quantity": "1",
+      "unit": "unidades"
+    },
+    {
+      "name": "frutas escarchadas",
+      "quantity": "1",
+      "unit": "unidades"
+    }
+  ]
+}

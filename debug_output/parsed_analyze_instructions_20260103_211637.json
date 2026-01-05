@@ -1,0 +1,40 @@
+{
+  "steps": [
+    {
+      "description": "Ponga en el vaso los ajos y el jengibre y trocee 4 seg/vel 5.",
+      "use_thermomix": "true",
+      "minutes": "0",
+      "seconds": "4",
+      "temperature": "",
+      "speed": "5",
+      "direction": "forward"
+    },
+    {
+      "description": "Agregue el zumo de limón, la miel, la salsa de soja, el aceite y la pimienta. Mezcle 5 seg/vel 5. Ponga las alitas de pollo en un bol, vierta la mezcla del vaso y remueva. Deje marinar un mínimo de 30 minutos.",
+      "use_thermomix": "true",
+      "minutes": "0",
+      "seconds": "5",
+      "temperature": "",
+      "speed": "5",
+      "direction": "forward"
+    },
+    {
+      "description": "Ponga en el vaso las alitas con todo el adobo y programe 25 min/100°C/giro inverso/vel Cuchara.",
+      "use_thermomix": "true",
+      "minutes": "25",
+      "seconds": "0",
+      "temperature": "100",
+      "speed": "Cuchara",
+      "direction": "reverse"
+    },
+    {
+      "description": "Seguidamente, programe 10 min/Varoma/giro inverso/vel Cuchara sin poner el cubilete para reducir la salsa.",
+      "use_thermomix": "true",
+      "minutes": "10",
+      "seconds": "0",
+      "temperature": "Varoma",
+      "speed": "Cuchara",
+      "direction": "reverse"
+    }
+  ]
+}

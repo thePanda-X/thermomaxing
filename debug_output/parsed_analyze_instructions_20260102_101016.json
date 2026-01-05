@@ -1,0 +1,58 @@
+{
+  "steps": [
+    {
+      "description": "Diluye la levadura en la leche templada, programa 2 minutos, 37ºC, velocidad 2. Luego añade la harina y amasa 1 minuto en velocidad espiga. Haz una bola con la masa, ponla en un cuenco tapada con film transparente engrasado y deja reposar de 1-3 horas en un lugar cálido. No crece apenas, no os asustéis.",
+      "use_thermomix": "true",
+      "minutes": "2",
+      "seconds": "0",
+      "temperature": "37",
+      "speed": "2",
+      "direction": "forward"
+    },
+    {
+      "description": "Pon en el vaso limpio y seco el azúcar, pulverízalo programando 30 segundos en velocidad 5-10. Añade la piel de una naranja y un la piel de ½ limón -sin parte blanca- y tritura 15 segundos en velocidad 10. Retira y reserva.",
+      "use_thermomix": "true",
+      "minutes": "0",
+      "seconds": "30",
+      "temperature": "",
+      "speed": "5-10",
+      "direction": "forward"
+    },
+    {
+      "description": "Infusiona la leche, echa la leche, la piel de naranja que nos queda sin triturar, la del medio limón y un palito de canela y programa 5 minutos, 90º, giro a la izquierda y velocidad cuchara. Deja que temple. Reserva.",
+      "use_thermomix": "true",
+      "minutes": "5",
+      "seconds": "0",
+      "temperature": "90",
+      "speed": "cuchara",
+      "direction": "reverse"
+    },
+    {
+      "description": "Pon en el vaso el azúcar glas aromatizado con las pieles de los cítricos y todos los ingredientes de la masa incluyendo la leche aromatizada -si no llega a los 80 ml totales, completa con más leche-, pon dentro el prefermento y programa 30 segundos en velocidad 6. Verás que la masa es más pegajosa -no líquida-. Amasa 3 minutos en velocidad espiga. Deja leudar dentro del vaso entre 1 y 2 horas.",
+      "use_thermomix": "true",
+      "minutes": "0",
+      "seconds": "30",
+      "temperature": "",
+      "speed": "6",
+      "direction": "forward"
+    },
+    {
+      "description": "Retira la masa del vaso. Espolvorea un poco de harina en la encimera, forma la bola de masa y desgasifica -amasar-. Es posible que tengas que engrasarte las manos para trabajarla si es pegajosa. Trabaja la masa. Déjala reposar 15 minutos y pasa a darle forma al roscón. Tienes que meter los dedos dentro de la bola, como para hacer un donut e ir levantándola y con el peso la masa se irá estirando, esta parece pequeña, pero no te puedes imaginar lo que sube luego en el horno. Ve estirando la masa para que quede redonda por igual y colócala en una bandeja de horno sobre el papel de hornear. Pincela con huevo y deja reposar unas 2 horas para que doble su volumen. Cuando haya leudado, vuelve a pincelar con huevo y añade ya la decoración a tu gusto.",
+      "use_thermomix": "false",
+      "minutes": "0",
+      "seconds": "0",
+      "temperature": "",
+      "speed": "",
+      "direction": ""
+    },
+    {
+      "description": "Precalienta el horno a 200ºC con calor arriba y abajo, y hornea 15-17 minutos o hasta que esté dorada. Si ves que se tuesta mucho por la superficie, cubre con un trozo de papel de plata o baja la temperatura a 180º. ¡Vais a alucinar cuando veáis como crece. Queda precioso!",
+      "use_thermomix": "false",
+      "minutes": "0",
+      "seconds": "0",
+      "temperature": "",
+      "speed": "",
+      "direction": ""
+    }
+  ]
+}
